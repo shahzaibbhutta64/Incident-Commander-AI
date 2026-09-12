@@ -1,8 +1,10 @@
 import os
 
-# Model configuration matching Groq OpenAI-compatible endpoint
+# Groq OpenAI-compatible base URL
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-DEFAULT_MODEL = "openai/gpt-oss-120b"
+
+# High-limit free model on Groq (30k TPM limit)
+DEFAULT_MODEL = "llama-3.1-8b-instant"
 
 # High-contrast Dark HSE Industrial Theme CSS
 CUSTOM_CSS = """
