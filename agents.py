@@ -10,7 +10,7 @@ def generate_investigation_report(
     required_docs: list,
     selected_outputs: list,
     image_gen_enabled: bool,
-    model_name: str = "llama-3.3-70b-versatile"
+    model_name: str = "llama-3.1-70b-versatile"
 ) -> str:
     """Generates a complete, factual HSE incident investigation report using Groq."""
     
