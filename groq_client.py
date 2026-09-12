@@ -12,15 +12,25 @@ def run_agent_prompt(
     client: Groq, 
     prompt: str, 
     system_message: str = "You are a helpful assistant.", 
-    model_name: str = "llama3-70b-8192"
+    model_name: str = "llama-3.3-70b-versatile"
 ) -> str:
-    """Helper function to execute a prompt against the Groq API."""
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.1
-    )
-    return response.choices[0].message.content
+    """Helper function to execute a prompt against the Groq API with fallback models."""
+    models_to_try = [model_name, "llama-3.1-70b-versatile", "llama3-70b-8192", "mixtral-8x7b-32768"]
+    
+    last_exception = None
+    for model in models_to_try:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.2
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            last_exception = e
+            continue
+            
+    raise RuntimeError(f"Groq API Error: {str(last_exception)}")
