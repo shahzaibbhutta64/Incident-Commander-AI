@@ -3,8 +3,8 @@ import os
 # Groq OpenAI-compatible base URL
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
-# Active production free model string on Groq
-DEFAULT_MODEL = "llama-3.1-8b-instant"
+# Official active free production model on Groq
+DEFAULT_MODEL = "llama-3.3-70b-versatile"
 
 # High-contrast Dark HSE Industrial Theme CSS
 CUSTOM_CSS = """
