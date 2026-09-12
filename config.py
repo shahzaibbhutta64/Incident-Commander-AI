@@ -3,13 +3,13 @@ import os
 # Groq OpenAI-compatible base URL
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
-# Candidate models in order of priority (Fallback Chain)
+# Candidate models ordered by highest Tokens Per Minute (TPM) free limits
 MODEL_CANDIDATES = [
-    "openai/gpt-oss-120b",
+    "llama-3.1-8b-instant",       # 30,000 TPM limit
+    "llama-3.3-70b-versatile",    # High reasoning model
     "openai/gpt-oss-20b",
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768"
+    "mixtral-8x7b-32768",
+    "openai/gpt-oss-120b"
 ]
 
 # High-contrast Dark HSE Industrial Theme CSS
