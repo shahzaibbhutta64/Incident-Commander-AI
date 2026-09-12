@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import time
 
 from config import CUSTOM_CSS
 from groq_client import get_groq_client
@@ -84,21 +85,25 @@ if st.button("Run Multi-Agent Investigation", type="primary"):
             
             st.write("🔍 **Agent 1 & 2**: Analyzing evidence, facts, and missing data...")
             st.session_state.evidence_analysis = agents.agent_intake_and_evidence(client, raw_input)
+            time.sleep(1)
             
             st.write("⏱️ **Agent 3**: Reconstructing chronological timeline...")
             st.session_state.timeline = agents.agent_timeline_reconstruction(
                 client, raw_input, st.session_state.evidence_analysis
             )
+            time.sleep(1)
             
             st.write("⚠️ **Agent 4**: Evaluating immediate/contributing causes and barriers...")
             st.session_state.causal_analysis = agents.agent_causal_analysis(
                 client, st.session_state.timeline, st.session_state.evidence_analysis
             )
+            time.sleep(1)
             
             st.write("🧬 **Agent 5**: Conducting 5-Why Root Cause Analysis and RCA Challenge...")
             st.session_state.rca_results = agents.agent_rca_engine(
                 client, st.session_state.causal_analysis, st.session_state.evidence_analysis
             )
+            time.sleep(1)
             
             st.write("🛡️ **Agent 6**: Generating CAPA Plan and Safety Alert...")
             st.session_state.capa_plan = agents.agent_capa_generation(
