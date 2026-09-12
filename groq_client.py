@@ -12,7 +12,7 @@ def run_agent_prompt(
     client: Groq, 
     prompt: str, 
     system_message: str = "You are a helpful assistant.", 
-    model_name: str = "llama-3.1-70b-versatile"
+    model_name: str = "llama-3.3-70b-versatile"
 ) -> str:
     """Helper function to execute a prompt against the Groq API."""
     response = client.chat.completions.create(
