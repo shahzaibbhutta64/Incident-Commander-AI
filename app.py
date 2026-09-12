@@ -1,160 +1,164 @@
 import streamlit as st
-from config import CUSTOM_CSS
 from groq_client import get_groq_client
-from state_manager import init_state, reset_state
-from pdf_utils import extract_text_from_pdf
-from agents import generate_investigation_report
+from agents import run_hse_agent, extract_text_from_pdf
 
-# Page Configuration
-st.set_page_config(page_title="Incident Commander AI", page_icon="📋", layout="wide")
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
-init_state()
+st.set_page_config(
+    page_title="Incident Commander AI",
+    page_icon="🛡️",
+    layout="wide"
+)
 
-st.title("Incident Commander AI")
-st.caption("Lead HSE Incident Investigation & Document Analysis Platform")
+st.title("🛡️ Incident Commander AI")
+st.markdown("Professional HSE Incident Investigation & Audit System")
 
-# Sidebar Configuration
-with st.sidebar:
-    st.header("Configuration")
-    api_key = st.secrets.get("GROQ_API_KEY", None) or st.secrets.get("GROK_API_KEY", None) or st.text_input("Enter Groq API Key:", type="password")
-    
-    st.divider()
-    if st.button("Reset Application"):
-        reset_state()
-        st.rerun()
-
-if not api_key:
-    st.warning("Please provide a valid Groq API key in sidebar or secrets.")
-    st.stop()
-
-try:
-    client = get_groq_client(api_key)
-except Exception as e:
-    st.error(f"Error initializing client: {e}")
-    st.stop()
-
-# 1. Input Data & Context
-st.subheader("1. Incident Input & Supporting Attachments")
-
-col_text, col_files = st.columns(2)
-
-with col_text:
-    user_notes = st.text_area(
-        "Enter unstructured incident details, statements, or initial reports:",
-        height=180,
-        placeholder="Enter incident context or leave blank if uploading full PDF report..."
-    )
-
-with col_files:
-    uploaded_files = st.file_uploader(
-        "Attach Investigation Documents (PDF format):",
-        type=["pdf"],
-        accept_multiple_files=True
-    )
-
-# Extract PDF contents
-extracted_pdf_text = ""
-if uploaded_files:
-    pdf_chunks = []
-    for file in uploaded_files:
-        content = extract_text_from_pdf(file)
-        pdf_chunks.append(f"=== ATTACHMENT: {file.name} ===\n{content}")
-    extracted_pdf_text = "\n\n".join(pdf_chunks)
-
-combined_input = f"{user_notes}\n\n{extracted_pdf_text}".strip()
-
-st.divider()
-
-# 2. Parameters & Scope Selection
-st.subheader("2. Investigation Scope & Methodology")
-
-col_a, col_b, col_c = st.columns(3)
-
-with col_a:
-    actual_severity = st.selectbox(
-        "Actual Severity:",
-        ["Minor / First Aid Case", "Medical Treatment Case", "Restricted Work Case", "Lost Time Injury", "Fatality"]
-    )
-    potential_severity = st.selectbox(
-        "Potential Severity:",
-        ["Low Potential", "Medium Potential", "High Potential / Major", "Fatality Risk"]
-    )
-
-with col_b:
-    rca_method = st.selectbox(
-        "Selected RCA Methodology:",
-        ["5 Whys Analysis", "Fishbone (Ishikawa) Diagram", "TOPSET Methodology", "Tripod Beta"]
-    )
-    image_gen_enabled = st.checkbox("Generate AI Incident Scene Image Prompt", value=True)
-
-with col_c:
-    required_docs = st.multiselect(
-        "Required Attachments Checklist:",
-        options=[
-            "Competency Certificates",
-            "Witness Statements",
-            "Injured Person Statement",
-            "Pre-operational Logs",
-            "HSE Induction Records",
-            "Training Attendance Registry"
-        ],
-        default=["Competency Certificates", "Witness Statements", "Pre-operational Logs"]
-    )
-
-st.subheader("3. Required Report Output Sections")
-selected_outputs = st.multiselect(
-    "Select sections to include in the generated report:",
-    options=[
-        "Title",
-        "Executive Summary",
-        "Incident Description",
-        "Immediate Actions Taken",
-        "Incident Timeline",
-        "Investigation Findings",
-        "Root Cause Analysis",
-        "Causes Breakdown",
-        "Supporting Documents & Evidence Status",
-        "Recommendations & CAPA Action Plan",
-        "Conclusion",
-        "AI Incident Image Prompt"
-    ],
-    default=[
-        "Title",
-        "Executive Summary",
-        "Incident Description",
-        "Immediate Actions Taken",
-        "Incident Timeline",
-        "Investigation Findings",
-        "Root Cause Analysis",
-        "Causes Breakdown",
-        "Supporting Documents & Evidence Status",
-        "Recommendations & CAPA Action Plan",
-        "Conclusion"
-    ]
+# Mode Selection
+app_mode = st.radio(
+    "Select Application Mode:",
+    ["MODE A: GENERATE INVESTIGATION REPORT", "MODE B: REVIEW & AUDIT EXISTING REPORT"],
+    horizontal=True
 )
 
 st.divider()
 
-# Execution Trigger
-if st.button("Generate Investigation Report", type="primary"):
-    if not combined_input:
-        st.error("Please enter text details or upload at least one PDF file.")
+col1, col2 = st.columns([3, 2], gap="large")
+
+with col1:
+    st.subheader("1. Incident Input & Documentation")
+    
+    input_text = ""
+    if "MODE B" in app_mode:
+        uploaded_pdf = st.file_uploader("Upload Investigation Report (PDF)", type=["pdf"])
+        if uploaded_pdf:
+            extracted_pdf_text = extract_text_from_pdf(uploaded_pdf)
+            st.success("PDF text extracted successfully!")
+            input_text = st.text_area(
+                "Extracted Text (You can add additional comments/notes below):",
+                value=extracted_pdf_text,
+                height=450
+            )
+        else:
+            input_text = st.text_area(
+                "Paste Report Text Directly:",
+                height=450,
+                placeholder="Paste the report text or upload a PDF above..."
+            )
     else:
-        with st.spinner("Analyzing data and generating report according to compliance rules..."):
+        input_text = st.text_area(
+            "Enter Raw Incident Details, Notes, and Statements:",
+            height=500,
+            placeholder="Describe what happened, timeline, equipment involved, personnel, site conditions, etc..."
+        )
+
+with col2:
+    st.subheader("2. Investigation Parameters")
+    
+    c_act, c_pot = st.columns(2)
+    with c_act:
+        actual_sev = st.selectbox(
+            "Actual Severity:",
+            ["Minor", "Medical Treatment", "Restricted Work", "LTI", "Fatality"]
+        )
+    with c_pot:
+        potential_sev = st.selectbox(
+            "Potential Severity:",
+            ["Low", "Medium", "High", "Major", "Fatality Risk"]
+        )
+        
+    rca_method = st.selectbox(
+        "Selected RCA Methodology:",
+        [
+            "5 Whys Analysis",
+            "Fishbone (Ishikawa) Diagram",
+            "Fault Tree Analysis (FTA)",
+            "Event Tree Analysis (ETA)",
+            "Bow-Tie Analysis",
+            "Tripod Beta",
+            "TOPSET Methodology"
+        ]
+    )
+    
+    required_docs = st.multiselect(
+        "Required Attachments Checklist:",
+        [
+            "Witness Statements",
+            "Competency & Training Records",
+            "Pre-operational / Maintenance Logs",
+            "Risk Assessment / JSA / PTW",
+            "Medical / First Aid Reports",
+            "Equipment Inspection Certificates",
+            "Incident Scene Photos"
+        ],
+        default=[
+            "Witness Statements",
+            "Competency & Training Records",
+            "Risk Assessment / JSA / PTW"
+        ]
+    )
+    
+    # Section options vary based on the mode
+    if "MODE A" in app_mode:
+        available_sections = [
+            "Executive Summary",
+            "Incident Description",
+            "Immediate Actions Taken",
+            "Incident Timeline",
+            "Investigation Findings",
+            "Root Cause Analysis",
+            "Causes Breakdown",
+            "Supporting Documents & Evidence Status",
+            "Recommendations & CAPA Action Plan",
+            "Conclusion",
+            "AI Incident Image Prompt"
+        ]
+    else:
+        available_sections = [
+            "Executive Review Summary",
+            "Missing Investigation Details & Narrative Gaps",
+            "RCA Execution Audit",
+            "Evidence & Document Gap Analysis",
+            "CAPA & Recommendation Improvements",
+            "Specific Recommendations for Report Correction"
+        ]
+        
+    selected_outputs = st.multiselect(
+        "Required Report Output Sections:",
+        options=available_sections,
+        default=available_sections
+    )
+    
+    image_gen = st.checkbox("Enable AI Image Scene Prompt", value=True if "MODE A" in app_mode else False)
+
+st.divider()
+
+if st.button("🚀 Process Request", type="primary", use_container_width=True):
+    if not input_text.strip():
+        st.error("Please provide input text or upload a valid PDF report.")
+    elif not selected_outputs:
+        st.error("Please select at least one output section to display.")
+    else:
+        with st.spinner("Processing request with Groq AI..."):
             try:
-                st.session_state.generated_report = generate_investigation_report(
+                client = get_groq_client()
+                result = run_hse_agent(
                     client=client,
-                    raw_text=combined_input,
-                    actual_severity=actual_severity,
-                    potential_severity=potential_severity,
+                    mode=app_mode,
+                    raw_text=input_text,
+                    actual_severity=actual_sev,
+                    potential_severity=potential_sev,
                     rca_method=rca_method,
                     required_docs=required_docs,
                     selected_outputs=selected_outputs,
-                    image_gen_enabled=image_gen_enabled
+                    image_gen_enabled=image_gen
+                )
+                
+                st.subheader("📋 Output Result")
+                st.markdown(result)
+                
+                st.download_button(
+                    label="📥 Download Output (.md)",
+                    data=result,
+                    file_name="hse_investigation_output.md",
+                    mime="text/markdown"
                 )
             except Exception as e:
-                st.error(f"Failed to generate report: {str(e)}")
-
-if st.session_state.generated_report:
-    st.divider()
-    st.markdown(st.session_state.generated_report)
+                st.error(f"Failed to process request: {str(e)}")
