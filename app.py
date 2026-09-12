@@ -141,16 +141,19 @@ if st.button("Generate Investigation Report", type="primary"):
         st.error("Please enter text details or upload at least one PDF file.")
     else:
         with st.spinner("Analyzing data and generating report according to compliance rules..."):
-            st.session_state.generated_report = generate_investigation_report(
-                client=client,
-                raw_text=combined_input,
-                actual_severity=actual_severity,
-                potential_severity=potential_severity,
-                rca_method=rca_method,
-                required_docs=required_docs,
-                selected_outputs=selected_outputs,
-                image_gen_enabled=image_gen_enabled
-            )
+            try:
+                st.session_state.generated_report = generate_investigation_report(
+                    client=client,
+                    raw_text=combined_input,
+                    actual_severity=actual_severity,
+                    potential_severity=potential_severity,
+                    rca_method=rca_method,
+                    required_docs=required_docs,
+                    selected_outputs=selected_outputs,
+                    image_gen_enabled=image_gen_enabled
+                )
+            except Exception as e:
+                st.error(f"Failed to generate report: {str(e)}")
 
 if st.session_state.generated_report:
     st.divider()
