@@ -10,10 +10,13 @@ def generate_investigation_report(
     required_docs: list,
     selected_outputs: list,
     image_gen_enabled: bool,
-    model_name: str = "llama-3.1-70b-versatile"
+    model_name: str = "llama-3.3-70b-versatile"
 ) -> str:
     """Generates a complete, factual HSE incident investigation report using Groq."""
     
+    # Safeguard: Truncate input text if it exceeds token limits
+    safe_raw_text = raw_text[:12000] if len(raw_text) > 12000 else raw_text
+
     system_prompt = f"""
 SYSTEM ROLE:
 You are an expert Lead Health, Safety, and Environment (HSE) Incident Investigator. Your task is to process raw incident notes, uploaded documents, user selections, and required evidence to generate a professional, regulatory-compliant Incident Investigation Report.
@@ -22,7 +25,7 @@ You are an expert Lead Health, Safety, and Environment (HSE) Incident Investigat
 1. INPUT DATA & CONTEXT
 --------------------------------------------------------------------------------
 - INCIDENT RAW DETAILS & NOTES:
-{raw_text}
+{safe_raw_text}
 
 - SEVERITY CLASSIFICATION:
   - Actual Severity: {actual_severity}
