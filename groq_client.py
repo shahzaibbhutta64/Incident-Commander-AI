@@ -14,8 +14,8 @@ def run_agent_prompt(
     system_message: str = "You are a helpful assistant.", 
     model_name: str = "llama-3.3-70b-versatile"
 ) -> str:
-    """Helper function to execute a prompt against the Groq API with fallback models."""
-    models_to_try = [model_name, "llama-3.1-70b-versatile", "llama3-70b-8192", "mixtral-8x7b-32768"]
+    """Helper function to execute a prompt against the Groq API with updated active fallback models."""
+    models_to_try = [model_name, "llama-3.1-8b-instant", "llama3-70b-8192"]
     
     last_exception = None
     for model in models_to_try:
