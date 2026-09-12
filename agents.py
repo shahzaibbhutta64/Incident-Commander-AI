@@ -10,11 +10,11 @@ def generate_investigation_report(
     required_docs: list,
     selected_outputs: list,
     image_gen_enabled: bool,
-    model_name: str = "llama-3.3-70b-versatile"
+    model_name: str = "llama3-70b-8192"
 ) -> str:
     """Generates a complete, factual HSE incident investigation report using Groq."""
     
-    # Safeguard: Truncate input text if it exceeds token limits
+    # Truncate input to avoid context limit issues
     safe_raw_text = raw_text[:12000] if len(raw_text) > 12000 else raw_text
 
     system_prompt = f"""
@@ -105,7 +105,7 @@ Generate the report using ONLY the selected sections from the user choices while
 
 ### Root Causes (Minimum 3 Required)
 1. [Root Cause 1]
-2. [Root Cause 2]
+2. [Root Cause 3]
 3. [Root Cause 3]
 
 ## Supporting Documents & Evidence Status
