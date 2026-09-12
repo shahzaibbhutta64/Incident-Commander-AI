@@ -3,8 +3,14 @@ import os
 # Groq OpenAI-compatible base URL
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
-# Official active free production model on Groq
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+# Candidate models in order of priority (Fallback Chain)
+MODEL_CANDIDATES = [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768"
+]
 
 # High-contrast Dark HSE Industrial Theme CSS
 CUSTOM_CSS = """
