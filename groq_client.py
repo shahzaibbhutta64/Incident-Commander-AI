@@ -8,7 +8,12 @@ def get_groq_client(api_key: str = None) -> Groq:
         raise ValueError("Groq API key is missing.")
     return Groq(api_key=key)
 
-def run_agent_prompt(client: Groq, prompt: str, system_message: str = "You are a helpful assistant.", model_name: str = "llama-3.3-70b-versatile") -> str:
+def run_agent_prompt(
+    client: Groq, 
+    prompt: str, 
+    system_message: str = "You are a helpful assistant.", 
+    model_name: str = "llama-3.1-70b-versatile"
+) -> str:
     """Helper function to execute a prompt against the Groq API."""
     response = client.chat.completions.create(
         model=model_name,
