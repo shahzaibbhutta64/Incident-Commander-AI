@@ -207,9 +207,9 @@ footer_html = """
 
 <div class="custom-footer">
     <span>Created by</span>
-    <a href="https://github.com/abbasraza5055" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
-        <img src="https://github.com/abbasraza5055.png" class="footer-avatar" alt="abbasraza5055">
-        <span class="footer-link">abbasraza5055</span>
+    <a href="https://github.com/shahzaibbhutta64" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <img src="https://github.com/shahzaibbhutta64.png" class="footer-avatar" alt="shahzaibbhutta64">
+        <span class="footer-link">shahzaibbhutta64</span>
     </a>
 </div>
 """
