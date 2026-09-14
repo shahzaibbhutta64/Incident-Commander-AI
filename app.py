@@ -162,54 +162,106 @@ if st.button("🚀 Process Request", type="primary", use_container_width=True):
                 )
             except Exception as e:
                 st.error(f"Failed to process request: {str(e)}")
-# --- ADD THIS AT THE VERY BOTTOM OF app.py ---
-
+# --- ANIMATED FOOTER (CENTER TO BOTTOM-RIGHT AFTER 2s) ---
 footer_html = """
 <style>
-    .custom-footer {
+    @keyframes collapseAndMove {
+        0% {
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(15, 23, 42, 0.95);
+            border-radius: 30px;
+            padding: 8px 18px;
+            width: auto;
+        }
+        80% {
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(15, 23, 42, 0.95);
+            border-radius: 30px;
+            padding: 8px 18px;
+            width: auto;
+        }
+        100% {
+            left: calc(100% - 180px);
+            transform: translateX(0);
+            background-color: transparent;
+            border-radius: 50%;
+            padding: 0;
+        }
+    }
+
+    @keyframes fadeOutText {
+        0%, 80% {
+            opacity: 1;
+            max-width: 250px;
+            margin-right: 8px;
+        }
+        100% {
+            opacity: 0;
+            max-width: 0px;
+            margin-right: 0px;
+            display: none;
+        }
+    }
+
+    .animated-footer-container {
         position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(6px);
-        color: #ffffff;
-        text-align: center;
-        padding: 8px 16px;
-        font-size: 14px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        bottom: 12px;
         z-index: 999999;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        animation: collapseAndMove 0.6s ease-in-out 2s forwards;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(15, 23, 42, 0.95);
+        border-radius: 30px;
+        padding: 8px 18px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
     }
-    
-    .footer-avatar {
-        width: 30px;
-        height: 30px;
+
+    .footer-text-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        animation: fadeOutText 0.5s ease-in-out 2s forwards;
+        color: #ffffff;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .footer-avatar-img {
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #3B82F6;
+        transition: transform 0.2s ease;
     }
 
-    .footer-link {
+    .footer-avatar-img:hover {
+        transform: scale(1.1);
+    }
+
+    .footer-user-link {
         color: #60A5FA;
         text-decoration: none;
         font-weight: 600;
     }
-
-    .footer-link:hover {
-        text-decoration: underline;
-    }
 </style>
 
-<div class="custom-footer">
-    <span>Created by</span>
-    <a href="https://github.com/shahzaibbhutta64" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
-        <img src="https://github.com/shahzaibbhutta64.png" class="footer-avatar" alt="shahzaibbhutta64">
-        <span class="footer-link">shahzaibbhutta64</span>
+<div class="animated-footer-container">
+    <a href="https://github.com/shahzaibbhutta64" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
+        <div class="footer-text-group">
+            <span>Created by</span>
+            <span class="footer-user-link">shahzaibbhutta64</span>
+        </div>
+        <img src="https://github.com/shahzaibbhutta64.png" class="footer-avatar-img" alt="Shahzaib" title="Shahzaib (shahzaibbhutta64)">
     </a>
 </div>
 """
