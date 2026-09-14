@@ -162,3 +162,56 @@ if st.button("🚀 Process Request", type="primary", use_container_width=True):
                 )
             except Exception as e:
                 st.error(f"Failed to process request: {str(e)}")
+# --- ADD THIS AT THE VERY BOTTOM OF app.py ---
+
+footer_html = """
+<style>
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(6px);
+        color: #ffffff;
+        text-align: center;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #3B82F6;
+    }
+
+    .footer-link {
+        color: #60A5FA;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .footer-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="custom-footer">
+    <span>Created by</span>
+    <a href="https://github.com/abbasraza5055" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <img src="https://github.com/abbasraza5055.png" class="footer-avatar" alt="abbasraza5055">
+        <span class="footer-link">abbasraza5055</span>
+    </a>
+</div>
+"""
+
+st.markdown(footer_html, unsafe_allow_html=True)
